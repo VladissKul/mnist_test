@@ -18,7 +18,7 @@ Make container:
   stage: make_container
   needs: [Make Image]
   tags:
-    - ng-jh-prod-gpu-m-1
+    - GPU1
   script:
     - docker pull vm-harbor-1.dh.rt.ru/datamining/test_mnist_service:dev
     - echo docker run --name mnist_cont --rm -p 1490:1490 -ti --env PORT='1490' -v /home/vladislav.kulakov/work/projects/mnist_service/images:/root/work/images -v "$MODEL_PATH:/root/work/model" vm-harbor-1.dh.rt.ru/datamining/test_mnist_service:dev
