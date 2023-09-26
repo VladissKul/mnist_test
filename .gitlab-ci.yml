@@ -14,7 +14,7 @@ Make Image:
     - source ./.env
     - echo ${MODEL_PATH}
   script:
-    - docker build --no-cache -t vm-harbor-1.dh.rt.ru/datamining/test_mnist_service:dev .
+    - docker build --no-cache -f Dockerfile_test -t vm-harbor-1.dh.rt.ru/datamining/test_mnist_service:dev .
     - docker push vm-harbor-1.dh.rt.ru/datamining/test_mnist_service:dev
   artifacts:
     paths:
