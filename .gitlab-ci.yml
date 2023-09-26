@@ -9,9 +9,17 @@ Make Image:
     manual
   tags:
     - DMZ_BUILDER_DM
+  before_script:
+    - echo -e "export MODEL_PATH=${MODEL_PATH}" >.env
+    - source ./.env
+    - echo ${MODEL_PATH}
   script:
-    - docker build --no-cache -t vm-harbor-1.dh.rt.ru/datamining/test_mnist_service:dev .
+    - docker build --no-cache -f Dockerfile_test -t vm-harbor-1.dh.rt.ru/datamining/test_mnist_service:dev .
     - docker push vm-harbor-1.dh.rt.ru/datamining/test_mnist_service:dev
+  artifacts:
+    paths:
+      - ./.env
+
 
 
 Make container:
@@ -19,7 +27,10 @@ Make container:
   needs: [Make Image]
   tags:
     - GPU1
+  before_script:
+    - source .env
+    - echo ${MODEL_PATH}
   script:
     - docker pull vm-harbor-1.dh.rt.ru/datamining/test_mnist_service:dev
-    - echo docker run --name mnist_cont --rm -p 1490:1490 -ti --env PORT='1490' -v /home/vladislav.kulakov/work/projects/mnist_service/images:/root/work/images -v "$MODEL_PATH:/root/work/model" vm-harbor-1.dh.rt.ru/datamining/test_mnist_service:dev
-    - docker run --name mnist_cont --rm -p 1490:1490 -ti --env PORT='1490' -v /home/vladislav.kulakov/work/projects/mnist_service/images:/root/work/images -v "$MODEL_PATH:/root/work/model" vm-harbor-1.dh.rt.ru/datamining/test_mnist_service:dev
+    - echo docker run --name mnist_cont --rm -d -p 1490:1490 --env PORT='1490' -v /home/vladislav.kulakov/work/projects/mnist_service/images:/root/work/images -v "$MODEL_PATH:/root/work/model" vm-harbor-1.dh.rt.ru/datamining/test_mnist_service:dev
+    - docker run --name mnist_cont --rm -d -p 1490:1490 --env PORT='1490' -v /home/vladislav.kulakov/work/projects/mnist_service/images:/root/work/images -v "$MODEL_PATH:/root/work/model" vm-harbor-1.dh.rt.ru/datamining/test_mnist_service:dev
