@@ -1,3 +1,4 @@
+import binascii
 from typing import Any
 
 import torch.nn.functional as F
@@ -71,7 +72,10 @@ class DataPreprocessing:
             ValueError(f"image_width, image_height, image_channel must be specified. (e.g. 28, 28, 1)\nExcepted: {int}, Input: {self.image_width, self.image_height, self.image_channel}")
 
     def __call__(self, image: np.ndarray) -> torch.tensor:
+        # try:
         image = base64.b64decode(image)
+        # except binascii.Error as e:
+        #     print("Ошибка base64:", e)
         image = np.frombuffer(image, dtype=np.uint8)
         image = cv2.resize(image, (28, 28))
         image = image.reshape(-1, self.image_channel, self.image_width, self.image_height)

@@ -8,6 +8,7 @@ import uvicorn
 from fastapi import FastAPI, UploadFile, Path
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
+from PIL import Image
 
 from model.classify_model import MNIST_Classify_Model, DataPreprocessing
 
@@ -34,6 +35,32 @@ def preprocess_image(image):
     image = cv2.resize(image, (28, 28))
     image = image.tobytes()
     return image
+
+# def preprocess_image(image_path):
+#     # Попытка открыть изображение с помощью OpenCV
+#     image = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
+#
+#     if image is None or image.size == 0:
+#         # Если изображение не было успешно открыто или оно пусто, вернуть None
+#         return None
+#
+#     # Изменяем размер изображения на 28x28 пикселей (стандартный размер MNIST)
+#     image = cv2.resize(image, (28, 28))
+#
+#     # Инвертируем цвета (черное на белом вместо белого на черном)
+#     image = 255 - image
+#
+#     # Бинаризуем изображение, преобразуя все пиксели в черный (0) или белый (1)
+#     threshold = 128  # Задаем порог бинаризации
+#     image = (image > threshold).astype(np.uint8)
+#
+#     # Нормализуем значения пикселей к диапазону [0, 1]
+#     image = image.astype(np.float32) / 255.0
+#
+#     # Разворачиваем изображение в одномерный массив размером 28x28=784
+#     image = image.reshape(784)
+#
+#     return image
 
 
 class RequestInput(BaseModel):
@@ -87,4 +114,4 @@ async def predict_from_path(image_path: str = Path(..., description="Путь к
 
 
 if __name__ == '__main__':
-    uvicorn.run(app, host='0.0.0.0', port=int(os.environ["PORT"]))
+    uvicorn.run(app, host='0.0.0.0', port=1490)
