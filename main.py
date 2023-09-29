@@ -7,8 +7,8 @@ import torch
 import uvicorn
 from fastapi import FastAPI, UploadFile, Path
 from fastapi.middleware.cors import CORSMiddleware
+from matplotlib import pyplot as plt
 from pydantic import BaseModel
-from PIL import Image
 
 from model.classify_model import MNIST_Classify_Model, DataPreprocessing
 
@@ -92,7 +92,16 @@ async def predict(image: UploadFile):
 
     os.remove(temp_image_path)
 
-    return {"prediction": prediction.tolist()}
+    preprocessed_image_array = np.frombuffer(preprocessed_image, dtype=np.uint8)
+    preprocessed_image_array = preprocessed_image_array.reshape(IMAGE_HEIGHT, IMAGE_WIDTH)
+
+    plt.imshow(preprocessed_image_array, cmap='gray')
+    plt.title(f'Predicted Digit: {prediction[0]}')
+    plt.axis('off')
+
+    plt.savefig('temp_plot.png')
+
+    return {"prediction": prediction.tolist(), "plot_image_url": "temp_plot.png"}
 
 
 @app.get("/predict_image/{image_path:path}")
