@@ -5,24 +5,27 @@ import cv2
 import numpy as np
 import torch
 import uvicorn
+import yaml
 from fastapi import FastAPI, UploadFile, Path
 from fastapi.middleware.cors import CORSMiddleware
-<<<<<<< HEAD
-
 from matplotlib import pyplot as plt
-=======
->>>>>>> 668343ec1ba754dc2cee2774555319a63dc65770
 from pydantic import BaseModel
 
+from logger.custom_logger import CustomLogger
 from model.classify_model import MNIST_Classify_Model, DataPreprocessing
 
-device = torch.device('cpu')
-SAVED_MODEL_PATH = "./model/model.pth"
+with open("config.yml", "r") as config_file:
+    config = yaml.safe_load(config_file)
+
+device = torch.device(config["app"]["device"])
+SAVED_MODEL_PATH = config["model"]["model_path"]
 
 CLASSIFY_MODEL = MNIST_Classify_Model().to(device)
 CLASSIFY_MODEL.load_state_dict(torch.load(SAVED_MODEL_PATH))
 
-IMAGE_WIDTH, IMAGE_HEIGHT, IMAGE_CHANNEL = 28, 28, 1
+IMAGE_WIDTH = config["image"]["width"]
+IMAGE_HEIGHT = config["image"]["height"]
+IMAGE_CHANNEL = config["image"]["channel"]
 
 app = FastAPI()
 app.add_middleware(
@@ -33,44 +36,36 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+custom_logger = CustomLogger()
+
 
 def preprocess_image(image):
     image = cv2.imread(image, cv2.IMREAD_GRAYSCALE)
     image = cv2.resize(image, (28, 28))
-    image = image.tobytes()
+    # image = image.tobytes()
     return image
 
 
-<<<<<<< HEAD
 # def preprocess_image(image_path):
-#     # Попытка открыть изображение с помощью OpenCV
 #     image = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
 #
 #     if image is None or image.size == 0:
-#         # Если изображение не было успешно открыто или оно пусто, вернуть None
 #         return None
 #
-#     # Изменяем размер изображения на 28x28 пикселей (стандартный размер MNIST)
 #     image = cv2.resize(image, (28, 28))
 #
-#     # Инвертируем цвета (черное на белом вместо белого на черном)
 #     image = 255 - image
 #
-#     # Бинаризуем изображение, преобразуя все пиксели в черный (0) или белый (1)
 #     threshold = 128  # Задаем порог бинаризации
 #     image = (image > threshold).astype(np.uint8)
 #
-#     # Нормализуем значения пикселей к диапазону [0, 1]
 #     image = image.astype(np.float32) / 255.0
 #
-#     # Разворачиваем изображение в одномерный массив размером 28x28=784
 #     image = image.reshape(784)
 #
 #     return image
 
 
-=======
->>>>>>> 668343ec1ba754dc2cee2774555319a63dc65770
 class RequestInput(BaseModel):
     input: str
 
@@ -80,44 +75,47 @@ async def index():
     return {"Message": ["Hello Dev"]}
 
 
+# @custom_logger.info
 @app.post("/predict")
 async def predict(image: UploadFile):
-    with tempfile.NamedTemporaryFile(delete=False) as temp_image:
-        temp_image.write(await image.read())
-        temp_image_path = temp_image.name
+    try:
+        with tempfile.NamedTemporaryFile(delete=False) as temp_image:
+            temp_image.write(await image.read())
+            temp_image_path = temp_image.name
 
-    preprocessed_image = preprocess_image(temp_image_path)
-    request_input = DataPreprocessing(
-        target_datatype=np.float32,
-        image_width=IMAGE_WIDTH,
-        image_height=IMAGE_HEIGHT,
-        image_channel=IMAGE_CHANNEL,
-    )(preprocessed_image)
+        preprocessed_image = preprocess_image(temp_image_path)
+        request_input = DataPreprocessing(
+            target_datatype=np.float32,
+            image_width=IMAGE_WIDTH,
+            image_height=IMAGE_HEIGHT,
+            image_channel=IMAGE_CHANNEL,
+        )(preprocessed_image)
 
-    prediction = CLASSIFY_MODEL(torch.tensor(request_input).to(device))
-    prediction = prediction.cpu().detach().numpy()
-    prediction = np.argmax(prediction, axis=1)
+        prediction = CLASSIFY_MODEL(torch.tensor(request_input).to(device))
+        prediction = prediction.cpu().detach().numpy()
+        prediction = np.argmax(prediction, axis=1)
 
-    os.remove(temp_image_path)
+        os.remove(temp_image_path)
 
-<<<<<<< HEAD
+        preprocessed_image_array = np.frombuffer(preprocessed_image, dtype=np.uint8)
+        preprocessed_image_array = preprocessed_image_array.reshape(IMAGE_HEIGHT, IMAGE_WIDTH)
 
-    preprocessed_image_array = np.frombuffer(preprocessed_image, dtype=np.uint8)
-    preprocessed_image_array = preprocessed_image_array.reshape(IMAGE_HEIGHT, IMAGE_WIDTH)
+        plt.imshow(preprocessed_image_array, cmap='gray')
+        plt.title(f'Predicted Digit: {prediction[0]}')
+        plt.axis('off')
 
-    plt.imshow(preprocessed_image_array, cmap='gray')
-    plt.title(f'Predicted Digit: {prediction[0]}')
-    plt.axis('off')
+        plt.savefig('temp_plot.png')
 
-    plt.savefig('temp_plot.png')
+        custom_logger.info(f"Prediction: {prediction.tolist()}")
+        custom_logger.info(f"Plot image URL: {config['image']['image_name']}")
 
-    return {"prediction": prediction.tolist(), "plot_image_url": "temp_plot.png"}
-
-=======
-    return {"prediction": prediction.tolist()}
->>>>>>> 668343ec1ba754dc2cee2774555319a63dc65770
+        return {"prediction": prediction.tolist(), "plot_image_url": config["image"]["image_name"]}
+    except Exception as e:
+        custom_logger.error(f"An error occurred: {str(e)}")
+        return {"error": str(e)}
 
 
+@custom_logger.info(predict)
 @app.get("/predict_image/{image_path:path}")
 async def predict_from_path(image_path: str = Path(..., description="Путь к изображению")):
     preprocessed_image = preprocess_image(image_path)
@@ -137,8 +135,4 @@ async def predict_from_path(image_path: str = Path(..., description="Путь к
 
 
 if __name__ == '__main__':
-<<<<<<< HEAD
-    uvicorn.run(app, host='0.0.0.0', port=1490)
-=======
-    uvicorn.run(app, host='0.0.0.0', port=int(os.environ["PORT"]))
->>>>>>> 668343ec1ba754dc2cee2774555319a63dc65770
+    uvicorn.run(app, host=config["app"]["host"], port=config["app"]["port"])
