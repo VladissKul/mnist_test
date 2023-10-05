@@ -7,8 +7,11 @@ import torch
 import uvicorn
 from fastapi import FastAPI, UploadFile, Path
 from fastapi.middleware.cors import CORSMiddleware
+<<<<<<< HEAD
 
 from matplotlib import pyplot as plt
+=======
+>>>>>>> 668343ec1ba754dc2cee2774555319a63dc65770
 from pydantic import BaseModel
 
 from model.classify_model import MNIST_Classify_Model, DataPreprocessing
@@ -38,6 +41,7 @@ def preprocess_image(image):
     return image
 
 
+<<<<<<< HEAD
 # def preprocess_image(image_path):
 #     # Попытка открыть изображение с помощью OpenCV
 #     image = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
@@ -65,6 +69,8 @@ def preprocess_image(image):
 #     return image
 
 
+=======
+>>>>>>> 668343ec1ba754dc2cee2774555319a63dc65770
 class RequestInput(BaseModel):
     input: str
 
@@ -94,6 +100,7 @@ async def predict(image: UploadFile):
 
     os.remove(temp_image_path)
 
+<<<<<<< HEAD
 
     preprocessed_image_array = np.frombuffer(preprocessed_image, dtype=np.uint8)
     preprocessed_image_array = preprocessed_image_array.reshape(IMAGE_HEIGHT, IMAGE_WIDTH)
@@ -106,6 +113,9 @@ async def predict(image: UploadFile):
 
     return {"prediction": prediction.tolist(), "plot_image_url": "temp_plot.png"}
 
+=======
+    return {"prediction": prediction.tolist()}
+>>>>>>> 668343ec1ba754dc2cee2774555319a63dc65770
 
 
 @app.get("/predict_image/{image_path:path}")
@@ -127,4 +137,8 @@ async def predict_from_path(image_path: str = Path(..., description="Путь к
 
 
 if __name__ == '__main__':
+<<<<<<< HEAD
     uvicorn.run(app, host='0.0.0.0', port=1490)
+=======
+    uvicorn.run(app, host='0.0.0.0', port=int(os.environ["PORT"]))
+>>>>>>> 668343ec1ba754dc2cee2774555319a63dc65770
