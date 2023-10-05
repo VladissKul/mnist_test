@@ -30,7 +30,7 @@ def preprocess_image(image_path):
 
 
 # Пример использования функции preprocess_image
-image_path = r'D:\Projects\mnist_service_test\images\test.png'  # Замените на путь к вашему изображению
+image_path = r'/images/test.png'  # Замените на путь к вашему изображению
 mnist_data = preprocess_image(image_path)
 
 if mnist_data is not None:

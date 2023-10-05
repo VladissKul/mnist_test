@@ -1,0 +1,13 @@
+app:
+  port: 1490
+  host: "0.0.0.0"
+  device: "cpu"
+
+model:
+  model_path: "./model/model.pth"
+
+image:
+  width: 28
+  height: 28
+  channel: 1
+  image_name: "temp_plot.png"

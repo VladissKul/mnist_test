@@ -79,10 +79,10 @@ class DataPreprocessing:
                 f"image_width, image_height, image_channel must be specified. (e.g. 28, 28, 1)\nExcepted: {int}, Input: {self.image_width, self.image_height, self.image_channel}")
 
     def __call__(self, image: np.ndarray) -> torch.tensor:
-        try:
-            image = base64.b64decode(image)
-        except binascii.Error as e:
-            print("Ошибка base64:", e)
+        # try:
+        #     image = base64.b64decode(image)
+        # except binascii.Error as e:
+        #     print("Ошибка base64:", e)
         # image = base64.b64decode(image)
 
         image = np.frombuffer(image, dtype=np.uint8)
