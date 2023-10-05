@@ -1,3 +1,4 @@
+
 import base64
 import binascii
 import logging
@@ -10,6 +11,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 logging.basicConfig(level=logging.INFO)
+
 
 
 class MNIST_Classify_Model(nn.Module):
@@ -45,14 +47,17 @@ class MNIST_Classify_Model(nn.Module):
         x = self.maxpool2d(x)
 
         # Classification Layer
+
         x = self.flatten(x)  # Shape: (batch_size, 256, 1, 1) -> (batch_size, 256)
         x = F.relu(self.fc1(x))  # Shape: (batch_size, 256) -> (batch_size, 64)
         x = F.softmax(self.fc2(x), dim=1)  # Shape: (batch_size, 64) -> (batch_size, 10)
+
 
         return x
 
     def __call__(self, *args: Any, **kwds: Any) -> Any:
         return super().__call__(*args, **kwds)
+
 
 
 class DataPreprocessing:
@@ -67,9 +72,11 @@ class DataPreprocessing:
         if self.target_datatype is None: ValueError(
             f"target_datatype must be specified. (e.g. np.float32)\nExcepted: {np.float32}, Input: {self.target_datatype}")
 
+
         self.image_width = image_width
         self.image_height = image_height
         self.image_channel = image_channel
+
         if self.image_width is not int or self.image_height is not int or self.image_channel is not int:
             ValueError(
                 f"image_width, image_height, image_channel must be specified. (e.g. 28, 28, 1)\nExcepted: {int}, Input: {self.image_width, self.image_height, self.image_channel}")
@@ -86,4 +93,6 @@ class DataPreprocessing:
         image = image / 255.0
         image = image.astype(self.target_datatype)
 
+
         return image
+

@@ -7,6 +7,7 @@ import torch
 import uvicorn
 from fastapi import FastAPI, UploadFile, Path
 from fastapi.middleware.cors import CORSMiddleware
+
 from matplotlib import pyplot as plt
 from pydantic import BaseModel
 
@@ -35,6 +36,7 @@ def preprocess_image(image):
     image = cv2.resize(image, (28, 28))
     image = image.tobytes()
     return image
+
 
 # def preprocess_image(image_path):
 #     # Попытка открыть изображение с помощью OpenCV
@@ -92,6 +94,7 @@ async def predict(image: UploadFile):
 
     os.remove(temp_image_path)
 
+
     preprocessed_image_array = np.frombuffer(preprocessed_image, dtype=np.uint8)
     preprocessed_image_array = preprocessed_image_array.reshape(IMAGE_HEIGHT, IMAGE_WIDTH)
 
@@ -102,6 +105,7 @@ async def predict(image: UploadFile):
     plt.savefig('temp_plot.png')
 
     return {"prediction": prediction.tolist(), "plot_image_url": "temp_plot.png"}
+
 
 
 @app.get("/predict_image/{image_path:path}")
