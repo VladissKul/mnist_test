@@ -33,3 +33,10 @@ class RequestInput(BaseModel):
 ```
 
 Please note that the code for applying the model will vary depending on the API requirements, so make sure to customize it accordingly.
+
+## Мониторинг Prometheus + Grafana
+1) Образ prometheus docker: docker pull prom/prometheus
+2) Запуск контейнера: docker run --rm -p 9090:9090 -v prometheus_data\prometheus.yml:/etc/prometheus/prometheus.yml prom/prometheus
+3) Доступ к Grafana по адресу: http://127.0.0.1:3000/
+
+Метрики, выводимые в dashboard grafana: Общее количество запросов, количество предсказаний

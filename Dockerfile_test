@@ -12,9 +12,9 @@ RUN apt-get -y install libgl1 libglib2.0-0 libgomp1
 RUN apt-get -y install python3-pip
 
 COPY requirements.txt .
-COPY main.py .
+COPY index.py .
 
 RUN pip install --upgrade -r requirements.txt
-RUN chmod +x /root/work/main.py
+RUN chmod +x /root/work/index.py
 
-CMD ["python3", "/root/work/main.py"]
+CMD ["python3", "/root/work/index.py"]
