@@ -32,5 +32,5 @@ Make container:
     - echo ${MODEL_PATH}
   script:
     - docker pull vm-harbor-1.dh.rt.ru/datamining/test_mnist_service:dev
-    - echo docker run --name mnist_cont --rm -d -p 1490:1490 --env PORT='1490' -v /home/vladislav.kulakov/work/projects/mnist_service/images:/root/work/images -v "$MODEL_PATH:/root/work/model" vm-harbor-1.dh.rt.ru/datamining/test_mnist_service:dev
-    - docker run --name mnist_cont --rm -d -p 1490:1490 --env PORT='1490' -v /home/vladislav.kulakov/work/projects/mnist_service/images:/root/work/images -v "$MODEL_PATH:/root/work/model" vm-harbor-1.dh.rt.ru/datamining/test_mnist_service:dev
+    - echo docker run --name mnist_cont --rm -d -p 1490:1490 --env PORT='1490' -v /home/vladislav.kulakov/work/projects/mnist_service/images:/root/work/images -v "$MODEL_PATH:/root/work/old_model_pytorch" vm-harbor-1.dh.rt.ru/datamining/test_mnist_service:dev
+    - docker run --name mnist_cont --rm -d -p 1490:1490 --env PORT='1490' -v /home/vladislav.kulakov/work/projects/mnist_service/images:/root/work/images -v "$MODEL_PATH:/root/work/old_model_pytorch" vm-harbor-1.dh.rt.ru/datamining/test_mnist_service:dev

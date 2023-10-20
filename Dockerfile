@@ -4,7 +4,7 @@ WORKDIR /root/work
 
 EXPOSE 1490
 
-COPY main.py .
-COPY test_requests.py .
+COPY index.py .
+COPY testing/test_requests.py .
 
-CMD ["python", "main.py"]
+CMD ["python", "index.py"]
