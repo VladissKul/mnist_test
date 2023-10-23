@@ -1,6 +1,6 @@
 torch==2.0.1
 opencv-python==4.8.0.76
-numpy==1.24.4
+numpy==1.26.0
 torchvision==0.15.2
 tqdm==4.66.1
 uvicorn==0.23.2
@@ -9,3 +9,8 @@ pydantic==2.3.0
 python-multipart==0.0.6
 ipykernel==6.25.1
 ipython==8.12.2
+PyYAML==6.0.1
+requests==2.31.0
+tensorflow==2.14.0
+keras==2.14.0
+matplotlib==3.8.0
