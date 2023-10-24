@@ -1,6 +1,6 @@
-
+import os
 import pickle
-from model import Model
+import sys
 
 
 class Predict:
@@ -11,28 +11,21 @@ class Predict:
         
     
     def load_config(self):
-        self.config['model_name']
+        pass
     
     
     def load_model(self):
-        with open(self.config['model_name'], 'rb') as f:
-            self.mdl = pickle.loads(f)
+        sys.path.append(f"""{os.environ['root']}/model""")
+        from model import Model
+        with open(f"""{os.environ['root']}/model/artefacts/model.pkl""", 'rb') as f:
+            self.model = pickle.load(f)
     
     
-    def predict_model(self, image):
-        self.mdl.load_data(image, preprocessing_type = 'predict')
-        self.mdl.preprocessing_data(preprocessing_type = 'predict')
-        self.mdl.train_model()
-        
-        
-    def save_preprocessed_data(self):
+    def model_predict(self, raw_image):
+        result = self.model.predict_pipeline(raw_image)
+        return result
+    
+    
+    def run(self, raw_image):
         self.load_model()
-        self.predict_model()
-        self.save_preprocessed_data()
-        
-        
-    def run(self):
-        self.load_model()
-        self.predict_model()
-        self.save_preprocessed_data()
-        
+        self.model_predict(raw_image)

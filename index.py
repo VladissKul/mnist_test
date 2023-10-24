@@ -38,7 +38,8 @@ prediction_counter = Counter("predictions_total", "Число предсказа
 Instrumentator().instrument(app).expose(app)
 
 """
-
+os.environ['root'] = '/root/work'
+os.environ['ServiceConfigFile'] = f"{os.environ['root']}/model/secrets/config.yml"
 from preprocessor.train import Train
 from preprocessor.predict import predict
 
@@ -49,8 +50,7 @@ train_data = Train()
 def predict(image: UploadFile)
     with tempfile.NamedTemporaryFile(delete=False) as temp_image:
         temp_image.write(image.read())
-        temp_image_path = temp_image.name
-        result = predict_model.run()
+        result = predict_model.run(temp_image.name)
     return {"prediction": prediction.tolist()}
 
         
